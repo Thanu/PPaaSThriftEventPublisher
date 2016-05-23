@@ -5,10 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.databridge.commons.Event;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -47,8 +44,8 @@ public class PPaaSThriftEventPublisher extends Thread {
             logger.info("Converting to Thrift event format...");
             List<Event> memberLifeCycleEvents = tsv2ThriftConverter.generateMemberLifeCycleEvents();
             List<Event> memberInfoEvents = tsv2ThriftConverter.generateMemberInfoEvents();
-            writeEventsToJournal(Constants.MEMBER_LIFE_CYCLE_JOURNAL_FILENAME, memberLifeCycleEvents);
-            writeEventsToJournal(Constants.MEMBER_INFO_JOURNAL_FILENAME, memberInfoEvents);
+            writeEventsToJournal(memberLifeCycleJournalFile, memberLifeCycleEvents);
+            writeEventsToJournal(memberInfoJournalFile, memberInfoEvents);
 
             String type = properties.getProperty(EVENT_TYPE_KEY, THRIFT_EVENT_TYPE);
             String url = properties.getProperty(Constants.THRIFT_RECEIVER_URL_KEY);
@@ -77,9 +74,21 @@ public class PPaaSThriftEventPublisher extends Thread {
         if (filename == null || filename.length() == 0 || eventList == null) {
             throw new IllegalArgumentException("Invalid arguments received for journal write operation");
         }
-        File file = new File(filename);
-        for (Event event : eventList) {
-            FileUtils.writeStringToFile(file, Arrays.toString(event.getPayloadData()), "UTF-8");
+        PrintWriter out = null;
+        try {
+            File file = new File(filename);
+            FileWriter fw = new FileWriter(file, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            out = new PrintWriter(bw);
+            for (Event event : eventList) {
+                out.println(Arrays.toString(event.getPayloadData()));
+                out.flush();
+            }
+        } finally {
+            if (out != null) {
+                out.close();
+            }
         }
+
     }
 }

@@ -140,7 +140,7 @@ public class TSV2ThriftConverter {
             memberInfoEvent.setOsArchitecture(tsvRecord.getOsArchitecture());
             memberInfoEvent.setIs64BitOS(tsvRecord.is64BitOS());
 
-            Event event = new Event(streamId, memberRecords.get(memberInfoEvent.getMemberId()).getCreatedTime(), null,
+            Event event = new Event(streamId, memberRecords.get(memberInfoEvent.getMemberId()).getInitializedTime(), null,
                     null, memberInfoEvent.getEventPayload());
             eventList.add(event);
         }

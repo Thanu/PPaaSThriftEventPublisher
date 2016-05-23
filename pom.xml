@@ -83,7 +83,8 @@
 
                 <configuration>
                     <excludes>
-                        <exclude>**/org.wso2.ppaas.integration.thrift.publisher/*.java</exclude>
+                        <exclude>**/org.wso2.ppaas.test.integration.thrift.publisher/*.java</exclude>
+                        <exclude>**/org.wso2.ppaas.test.live.thrift.publisher/*.java</exclude>
                     </excludes>
                 </configuration>
 
@@ -114,6 +115,55 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven.surefire.plugin.version}</version>
+                        <inherited>false</inherited>
+
+                        <configuration>
+                            <excludes>
+                                <exclude>**/org.wso2.ppaas.test.integration.thrift.publisher/*.java</exclude>
+                                <exclude>**/org.wso2.ppaas.test.live.thrift.publisher/*.java</exclude>
+                            </excludes>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <phase>integration-test</phase>
+
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>distribution.zip</name>
+                                            <value>${basedir}/target/${distribution.name}-${project.version}.zip</value>
+                                        </property>
+                                    </systemProperties>
+
+                                    <argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m</argLine>
+                                    <suiteXmlFiles>
+                                        <suiteXmlFile>
+                                            ${basedir}/src/test/resources/thrift-event-publisher-live-testng.xml
+                                        </suiteXmlFile>
+                                    </suiteXmlFiles>
+                                    <workingDirectory>${basedir}/target</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -177,6 +227,11 @@
             <version>${databridge.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.databind.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon.analytics-common</groupId>
             <artifactId>org.wso2.carbon.databridge.core</artifactId>
             <version>${databridge.version}</version>
@@ -187,11 +242,6 @@
             <artifactId>org.wso2.carbon.databridge.receiver.thrift</artifactId>
             <version>${databridge.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.databind.version}</version>
         </dependency>
     </dependencies>
 
@@ -213,5 +263,6 @@
         <joda.time.version>2.9.3</joda.time.version>
         <databridge.version>5.0.8</databridge.version>
         <jackson.databind.version>2.5.4</jackson.databind.version>
+        <carbon.utils.version>4.4.2</carbon.utils.version>
     </properties>
 </project>

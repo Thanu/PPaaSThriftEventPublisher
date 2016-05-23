@@ -1,4 +1,6 @@
-package org.wso2.ppaas.integration.thrift.publisher;
+package org.wso2.ppaas.test.integration.thrift.publisher;
+
+import org.wso2.ppaas.test.TestUtils;
 
 import java.io.File;
 
@@ -13,13 +15,13 @@ public class DataPublisherTestUtil {
     }
 
     public static void setKeyStoreParams() {
-        String keyStore = ThriftEventPublisherIntegrationTest.getTestResourcesPath();
+        String keyStore = TestUtils.getTestResourcesPath();
         System.setProperty("Security.KeyStore.Location", keyStore + File.separator + "wso2carbon.jks");
         System.setProperty("Security.KeyStore.Password", "wso2carbon");
     }
 
     public static String getDataBridgeConfigPath() {
-        String filePath = ThriftEventPublisherIntegrationTest.getTestResourcesPath();
+        String filePath = TestUtils.getTestResourcesPath();
         return filePath + File.separator + "data-bridge-config.xml";
     }
 }

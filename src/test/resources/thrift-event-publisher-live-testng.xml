@@ -27,7 +27,7 @@
         </groups>
 
         <packages>
-            <package name="org.wso2.ppaas.test.integration.thrift.publisher.*"/>
+            <package name="org.wso2.ppaas.test.live.thrift.publisher.*"/>
         </packages>
     </test>
 </suite>

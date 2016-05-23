@@ -1,4 +1,4 @@
-package org.wso2.ppaas.integration.thrift.publisher;
+package org.wso2.ppaas.test.integration.thrift.publisher;
 
 import org.apache.log4j.Logger;
 import org.wso2.carbon.databridge.commons.Credentials;
@@ -17,41 +17,48 @@ import org.wso2.carbon.databridge.receiver.thrift.ThriftDataReceiver;
 import org.wso2.carbon.user.api.UserStoreException;
 
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThriftTestServer {
-    private Logger log = Logger.getLogger(ThriftTestServer.class);
+    private Logger logger = Logger.getLogger(ThriftTestServer.class);
     private ThriftDataReceiver thriftDataReceiver;
     private InMemoryStreamDefinitionStore streamDefinitionStore;
     private AtomicInteger numberOfEventsReceived = new AtomicInteger(0);
     private RestarterThread restarterThread;
     private AgentCallback agentCallback;
+    private List<Event> receivedEventList = new ArrayList<>();
 
     public ThriftTestServer() {
         this.agentCallback = new AgentCallback() {
-            int totalSize = 0;
+            private AtomicInteger numberOfEventsReceived = new AtomicInteger(0);
 
-            public void definedStream(StreamDefinition streamDefinition,
-                                      int tenantId) {
-                log.info("StreamDefinition " + streamDefinition);
+            @Override
+            public void definedStream(StreamDefinition streamDefinition, int i) {
+                logger.info("StreamDefinition " + streamDefinition);
             }
 
             @Override
-            public void removeStream(StreamDefinition streamDefinition, int tenantId) {
-                log.info("StreamDefinition remove " + streamDefinition);
+            public void removeStream(StreamDefinition streamDefinition, int i) {
+                logger.info("StreamDefinition remove " + streamDefinition);
             }
 
             @Override
             public void receive(List<Event> eventList, Credentials credentials) {
                 numberOfEventsReceived.addAndGet(eventList.size());
-                log.info("Received events : " + numberOfEventsReceived);
+                logger.info("Received events : " + numberOfEventsReceived);
+                receivedEventList.addAll(eventList);
             }
         };
     }
 
     public ThriftTestServer(AgentCallback agentCallback) {
         this.agentCallback = agentCallback;
+    }
+
+    public List<Event> getReceivedEventList() {
+        return receivedEventList;
     }
 
     public void addStreamDefinition(StreamDefinition streamDefinition, int tenantId)
@@ -78,7 +85,7 @@ public class ThriftTestServer {
         DataBridge databridge = new DataBridge(new AuthenticationHandler() {
             @Override
             public boolean authenticate(String userName, String password) {
-                log.info("Thrift authentication returning true");
+                logger.info("Thrift authentication returning true");
                 return true;// allays authenticate to true
             }
 
@@ -95,7 +102,7 @@ public class ThriftTestServer {
             @Override
             public void initContext(AgentSession agentSession) {
                 //To change body of implemented methods use File | Settings | File Templates.
-                log.info("Initializing Thrift agent context");
+                logger.info("Initializing Thrift agent context");
             }
 
             @Override
@@ -109,9 +116,9 @@ public class ThriftTestServer {
         databridge.subscribe(this.agentCallback);
 
         String address = "localhost";
-        log.info("Test Server starting on " + address);
+        logger.info("Test Server starting on " + address);
         thriftDataReceiver.start(address);
-        log.info("Test Server Started");
+        logger.info("Test Server Started");
     }
 
     public int getNumberOfEventsReceived() {
@@ -128,7 +135,7 @@ public class ThriftTestServer {
 
     public void stop() {
         thriftDataReceiver.stop();
-        log.info("Test Server Stopped");
+        logger.info("Test Server Stopped");
     }
 
     public void stopAndStartDuration(int port, long stopAfterTimeMilliSeconds, long startAfterTimeMS)
@@ -161,7 +168,7 @@ public class ThriftTestServer {
             try {
                 Thread.sleep(stopAfterTimeMilliSeconds);
             } catch (InterruptedException e) {
-                log.error(e);
+                logger.error(e);
             }
             if (thriftDataReceiver != null) {
                 thriftDataReceiver.stop();
@@ -169,11 +176,11 @@ public class ThriftTestServer {
 
             eventReceived = getNumberOfEventsReceived();
 
-            log.info("Number of events received in server shutdown :" + eventReceived);
+            logger.info("Number of events received in server shutdown :" + eventReceived);
             try {
                 Thread.sleep(startAfterTimeMS);
             } catch (InterruptedException e) {
-                log.error(e);
+                logger.error(e);
             }
 
             try {
@@ -183,7 +190,7 @@ public class ThriftTestServer {
                     start(port);
                 }
             } catch (DataBridgeException e) {
-                log.error(e);
+                logger.error(e);
             }
 
         }

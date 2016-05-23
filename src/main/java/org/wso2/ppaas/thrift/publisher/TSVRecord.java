@@ -16,7 +16,7 @@ public class TSVRecord {
     private String partitionId;
     private String instanceType;
     private String scalingDecisionId;
-    private boolean isMultiTenant;
+    private String isMultiTenant;
     private String privateIpAddr;
     private String publicIpAddr;
     private String allocatedIpAddr;
@@ -25,7 +25,7 @@ public class TSVRecord {
     private String cpu;
     private String ram;
     private String imageId;
-    private String loginPort;
+    private int loginPort;
     private String osName;
     private String osVersion;
     private String osArchitecture;
@@ -143,11 +143,11 @@ public class TSVRecord {
         this.scalingDecisionId = scalingDecisionId;
     }
 
-    public boolean getIsMultiTenant() {
+    public String getIsMultiTenant() {
         return isMultiTenant;
     }
 
-    public void setIsMultiTenant(boolean isMultiTenant) {
+    public void setIsMultiTenant(String isMultiTenant) {
         this.isMultiTenant = isMultiTenant;
     }
 
@@ -215,11 +215,11 @@ public class TSVRecord {
         this.imageId = imageId;
     }
 
-    public String getLoginPort() {
+    public int getLoginPort() {
         return loginPort;
     }
 
-    public void setLoginPort(String loginPort) {
+    public void setLoginPort(int loginPort) {
         this.loginPort = loginPort;
     }
 

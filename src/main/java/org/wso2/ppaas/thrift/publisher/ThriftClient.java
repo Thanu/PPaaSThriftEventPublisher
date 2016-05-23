@@ -18,21 +18,20 @@ import java.util.List;
 
 class ThriftClient {
     private static Logger logger = LoggerFactory.getLogger(ThriftClient.class);
-    private static String currentDir = new File(".").getAbsolutePath();
     private DataPublisher dataPublisher;
 
     ThriftClient(String type, String url, String authURL, String username, String password) throws
             DataEndpointAuthenticationException, DataEndpointAgentConfigurationException, TransportException,
             DataEndpointException, DataEndpointConfigurationException {
-        System.setProperty("javax.net.ssl.trustStore", currentDir + File.separator + "resources" + File.separator +
-                "client-truststore.jks");
+        System.setProperty("javax.net.ssl.trustStore", Constants.PPAAS_PUBLISHER_HOME_DIR + File.separator +
+                "resources" + File.separator + "client-truststore.jks");
         AgentHolder.setConfigPath(getDataAgentConfigPath());
         this.dataPublisher = new DataPublisher(type, url, authURL, username, password);
         sleep(1000); // wait until connection is established
     }
 
     private static String getDataAgentConfigPath() {
-        return currentDir + File.separator + "conf" + File.separator + "data-agent-conf.xml";
+        return Constants.PPAAS_PUBLISHER_HOME_DIR + File.separator + "conf" + File.separator + "data-agent-conf.xml";
     }
 
     public void publishEvents(List<Event> eventList) {

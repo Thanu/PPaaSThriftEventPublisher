@@ -11,10 +11,7 @@ import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.wso2.ppaas.thrift.publisher.Constants.*;
 
@@ -46,8 +43,8 @@ public class TSV2ThriftConverter {
             tsvRecord.setNetworkPartition(dataArray[10]);
             tsvRecord.setPartitionId(dataArray[11]);
             tsvRecord.setInstanceType(dataArray[12]);
-            tsvRecord.setScalingDecisionId(dataArray[13]);
-            tsvRecord.setIsMultiTenant(Boolean.getBoolean(dataArray[14]));
+            tsvRecord.setScalingDecisionId(dataArray[13] + "-" + UUID.randomUUID().toString());
+            tsvRecord.setIsMultiTenant(dataArray[14]);
             tsvRecord.setPrivateIpAddr(dataArray[15]);
             tsvRecord.setPublicIpAddr(dataArray[16]);
             tsvRecord.setAllocatedIpAddr(dataArray[17]);
@@ -56,11 +53,11 @@ public class TSV2ThriftConverter {
             tsvRecord.setCpu(dataArray[20]);
             tsvRecord.setRam(dataArray[21]);
             tsvRecord.setImageId(dataArray[22]);
-            tsvRecord.setLoginPort(dataArray[23]);
+            tsvRecord.setLoginPort(Integer.parseInt(dataArray[23]));
             tsvRecord.setOsName(dataArray[24]);
             tsvRecord.setOsVersion(dataArray[25]);
             tsvRecord.setOsArchitecture(dataArray[26]);
-            tsvRecord.setIs64BitOS(Boolean.getBoolean(dataArray[27]));
+            tsvRecord.setIs64BitOS(Boolean.parseBoolean(dataArray[27]));
 
             tsvRecordList.add(tsvRecord);
             memberRecords.put(tsvRecord.getMemberId(), tsvRecord);
@@ -89,7 +86,7 @@ public class TSV2ThriftConverter {
                     lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_INITIALIZED);
                 } else if (i == 2) {
                     lifeCycleEvent.setTimestamp(tsvRecord.getStartedTime());
-                    lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_STARTED);
+                    lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_STARTING);
                 } else if (i == 3) {
                     lifeCycleEvent.setTimestamp(tsvRecord.getActivatedTime());
                     lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_ACTIVATED);

@@ -1,4 +1,4 @@
-package org.wso2.ppaas.integration.thrift.publisher;
+package org.wso2.ppaas.test.integration.thrift.publisher;
 
 
 import org.slf4j.Logger;

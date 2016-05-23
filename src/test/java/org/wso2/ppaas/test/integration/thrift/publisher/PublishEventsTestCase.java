@@ -1,11 +1,9 @@
-package org.wso2.ppaas.integration.thrift.publisher;
+package org.wso2.ppaas.test.integration.thrift.publisher;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
-
-import static org.wso2.ppaas.thrift.publisher.Constants.THRIFT_RECEIVER_URL_KEY;
 
 
 /**
@@ -22,8 +20,7 @@ public class PublishEventsTestCase extends ThriftEventPublisherIntegrationTest {
     @Test(description = "Publish User Events",
             timeOut = 60000)
     public void testPublisherClient() throws Exception {
-        String thriftReceiverURL = properties.getProperty(THRIFT_RECEIVER_URL_KEY);
-        logger.info("Publishing events to Thrift receiver URL: " + thriftReceiverURL);
+
 
     }
 }

@@ -18,11 +18,10 @@ import static org.wso2.ppaas.thrift.publisher.Constants.THRIFT_EVENT_TYPE;
  */
 public class PPaaSThriftEventPublisher extends Thread {
     private static Logger logger = LoggerFactory.getLogger(PPaaSThriftEventPublisher.class);
-    private static String currentDir = new File(".").getAbsolutePath();
-    private static String memberLifeCycleJournalFile = currentDir + File.separator + "logs" + File.separator +
-            Constants.MEMBER_LIFE_CYCLE_JOURNAL_FILENAME;
-    private static String memberInfoJournalFile = currentDir + File.separator + "logs" + File.separator +
-            Constants.MEMBER_INFO_JOURNAL_FILENAME;
+    private static String memberLifeCycleJournalFile = Constants.PPAAS_PUBLISHER_HOME_DIR + File.separator + "logs" +
+            File.separator + Constants.MEMBER_LIFE_CYCLE_JOURNAL_FILENAME;
+    private static String memberInfoJournalFile = Constants.PPAAS_PUBLISHER_HOME_DIR + File.separator + "logs" + File
+            .separator + Constants.MEMBER_INFO_JOURNAL_FILENAME;
     private Properties properties = new Properties();
     private TSV2ThriftConverter tsv2ThriftConverter = new TSV2ThriftConverter();
     private ThriftClient thriftClient;

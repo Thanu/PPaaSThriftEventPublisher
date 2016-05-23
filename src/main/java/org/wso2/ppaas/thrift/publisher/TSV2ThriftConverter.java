@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.UUID;
 import static org.wso2.ppaas.thrift.publisher.Constants.*;
 
 public class TSV2ThriftConverter {
@@ -46,7 +46,7 @@ public class TSV2ThriftConverter {
             tsvRecord.setNetworkPartition(dataArray[10]);
             tsvRecord.setPartitionId(dataArray[11]);
             tsvRecord.setInstanceType(dataArray[12]);
-            tsvRecord.setScalingDecisionId(dataArray[13]);
+            tsvRecord.setScalingDecisionId(dataArray[13] + "-" + UUID.randomUUID().toString());
             tsvRecord.setIsMultiTenant(Boolean.getBoolean(dataArray[14]));
             tsvRecord.setPrivateIpAddr(dataArray[15]);
             tsvRecord.setPublicIpAddr(dataArray[16]);
@@ -74,8 +74,8 @@ public class TSV2ThriftConverter {
             throw new RuntimeException("TSV record list is null");
         }
 
-        String streamId = DataBridgeCommonsUtils.generateStreamId(Constants.MEMBER_LIFE_CYCLE_STREAM_NAME, Constants
-                .MEMBER_LIFE_CYCLE_STREAM_VERSION);
+        String streamId = DataBridgeCommonsUtils
+                .generateStreamId(Constants.MEMBER_LIFE_CYCLE_STREAM_NAME, Constants.MEMBER_LIFE_CYCLE_STREAM_VERSION);
         List<Event> eventList = new ArrayList<>();
         for (TSVRecord tsvRecord : tsvRecordList) {
             for (int i = 0; i < Constants.MEMBER_STATUS_COUNT; i++) {
@@ -89,7 +89,7 @@ public class TSV2ThriftConverter {
                     lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_INITIALIZED);
                 } else if (i == 2) {
                     lifeCycleEvent.setTimestamp(tsvRecord.getStartedTime());
-                    lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_STARTED);
+                    lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_STARTING);
                 } else if (i == 3) {
                     lifeCycleEvent.setTimestamp(tsvRecord.getActivatedTime());
                     lifeCycleEvent.setMemberStatus(Constants.MEMBER_STATUS_ACTIVATED);
@@ -104,8 +104,8 @@ public class TSV2ThriftConverter {
                 lifeCycleEvent.setPartitionId(tsvRecord.getPartitionId());
                 lifeCycleEvent.setServiceName(tsvRecord.getServiceName());
 
-                Event event = new Event(streamId, lifeCycleEvent.getTimestamp(), null, null, lifeCycleEvent
-                        .getEventPayload());
+                Event event = new Event(streamId, lifeCycleEvent.getTimestamp(), null, null,
+                        lifeCycleEvent.getEventPayload());
                 eventList.add(event);
             }
         }
@@ -117,8 +117,8 @@ public class TSV2ThriftConverter {
             throw new RuntimeException("TSV record list is null");
         }
 
-        String streamId = DataBridgeCommonsUtils.generateStreamId(Constants.MEMBER_INFO_STREAM_NAME, Constants
-                .MEMBER_INFO_STREAM_VERSION);
+        String streamId = DataBridgeCommonsUtils
+                .generateStreamId(Constants.MEMBER_INFO_STREAM_NAME, Constants.MEMBER_INFO_STREAM_VERSION);
         List<Event> eventList = new ArrayList<>();
         for (TSVRecord tsvRecord : tsvRecordList) {
             MemberInfoEvent memberInfoEvent = new MemberInfoEvent();
@@ -140,8 +140,8 @@ public class TSV2ThriftConverter {
             memberInfoEvent.setOsArchitecture(tsvRecord.getOsArchitecture());
             memberInfoEvent.setIs64BitOS(tsvRecord.is64BitOS());
 
-            Event event = new Event(streamId, memberRecords.get(memberInfoEvent.getMemberId()).getCreatedTime(),
-                    null, null, memberInfoEvent.getEventPayload());
+            Event event = new Event(streamId, memberRecords.get(memberInfoEvent.getMemberId()).getCreatedTime(), null,
+                    null, memberInfoEvent.getEventPayload());
             eventList.add(event);
         }
         return eventList;

@@ -29,6 +29,6 @@ public class Constants {
     public static final int MEMBER_STATUS_COUNT = 4;
     public static final String MEMBER_STATUS_CREATED = "Created";
     public static final String MEMBER_STATUS_INITIALIZED = "Initialized";
-    public static final String MEMBER_STATUS_STARTED = "Started";
+    public static final String MEMBER_STATUS_STARTING = "Starting";
     public static final String MEMBER_STATUS_ACTIVATED = "Active";
 }

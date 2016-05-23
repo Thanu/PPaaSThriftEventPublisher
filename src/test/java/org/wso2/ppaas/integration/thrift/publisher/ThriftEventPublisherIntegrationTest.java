@@ -1,19 +1,23 @@
 package org.wso2.ppaas.integration.thrift.publisher;
 
 import net.lingala.zip4j.core.ZipFile;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 public class ThriftEventPublisherIntegrationTest {
     private static final Logger logger = LoggerFactory.getLogger(ThriftEventPublisherIntegrationTest.class);
+    private static String currentDir = new File(".").getAbsolutePath();
+    private static String source = System.getProperty("distribution.zip");
+    private static String destination = System.getProperty("basedir") +
+            File.separator + "target" + File.separator + "PPaaSThriftPublisher";
+    protected Properties properties = new Properties();
     private Process publisherProcess = null;
-    private String source = System.getProperty("distribution.zip");
-    private String destination = System.getProperty("basedir") + File.separator + "target" + File.separator +
-            "PPaaSThriftPublisher";
     private ServerLogReader inputStreamHandler;
     private ServerLogReader errorStreamHandler;
 
@@ -34,14 +38,29 @@ public class ThriftEventPublisherIntegrationTest {
         }
     }
 
+    public static String getTestResourcesPath() {
+        return currentDir + File.separator + ".." + File.separator +
+                "src" + File.separator + "test" + File.separator + "resources" + File.separator;
+    }
+
+    public static String getPPaaSThriftEventPublisherHome() {
+        return destination;
+    }
+
+    public static void copyFile(String source, String dest) throws IOException {
+        File sourceFile = new File(source);
+        File destDir = new File(dest);
+        FileUtils.copyFileToDirectory(sourceFile, destDir);
+    }
+
     protected void startPublisher() throws IOException {
         File publisherHome = new File(destination);
         String cmdArray[] = new String[]{"sh", "bin" + File.separator + "run.sh"};
         publisherProcess = Runtime.getRuntime().exec(cmdArray, (String[]) null, publisherHome);
-        this.errorStreamHandler = new ServerLogReader("errorStream", publisherProcess.getErrorStream());
-        this.inputStreamHandler = new ServerLogReader("inputStream", publisherProcess.getInputStream());
-        this.inputStreamHandler.start();
-        this.errorStreamHandler.start();
+        errorStreamHandler = new ServerLogReader("errorStream", publisherProcess.getErrorStream());
+        inputStreamHandler = new ServerLogReader("inputStream", publisherProcess.getInputStream());
+        inputStreamHandler.start();
+        errorStreamHandler.start();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
@@ -56,10 +75,16 @@ public class ThriftEventPublisherIntegrationTest {
 
     protected void serverShutdown() {
         logger.info("Shutting down PPaaSThriftEventPublisher...");
-        this.inputStreamHandler.stop();
-        this.errorStreamHandler.stop();
-        this.publisherProcess.destroy();
-        this.publisherProcess = null;
+        if (inputStreamHandler != null) {
+            inputStreamHandler.stop();
+        }
+        if (errorStreamHandler != null) {
+            errorStreamHandler.stop();
+        }
+        if (publisherProcess != null) {
+            publisherProcess.destroy();
+            publisherProcess = null;
+        }
     }
 
     @BeforeSuite()

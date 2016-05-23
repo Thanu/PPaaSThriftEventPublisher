@@ -47,7 +47,7 @@ public class TSV2ThriftConverter {
             tsvRecord.setPartitionId(dataArray[11]);
             tsvRecord.setInstanceType(dataArray[12]);
             tsvRecord.setScalingDecisionId(dataArray[13] + "-" + UUID.randomUUID().toString());
-            tsvRecord.setIsMultiTenant(Boolean.getBoolean(dataArray[14]));
+            tsvRecord.setIsMultiTenant(dataArray[14]);
             tsvRecord.setPrivateIpAddr(dataArray[15]);
             tsvRecord.setPublicIpAddr(dataArray[16]);
             tsvRecord.setAllocatedIpAddr(dataArray[17]);
@@ -56,7 +56,7 @@ public class TSV2ThriftConverter {
             tsvRecord.setCpu(dataArray[20]);
             tsvRecord.setRam(dataArray[21]);
             tsvRecord.setImageId(dataArray[22]);
-            tsvRecord.setLoginPort(dataArray[23]);
+            tsvRecord.setLoginPort(Integer.parseInt(dataArray[23]));
             tsvRecord.setOsName(dataArray[24]);
             tsvRecord.setOsVersion(dataArray[25]);
             tsvRecord.setOsArchitecture(dataArray[26]);

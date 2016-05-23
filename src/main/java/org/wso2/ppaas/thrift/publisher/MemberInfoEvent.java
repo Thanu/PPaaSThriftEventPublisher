@@ -4,7 +4,7 @@ public class MemberInfoEvent {
     private String memberId;
     private String instanceType;
     private String scalingDecisionId;
-    private boolean isMultiTenant;
+    private String isMultiTenant;
     private String privateIpAddr;
     private String publicIpAddr;
     private String allocatedIpAddr;
@@ -13,7 +13,7 @@ public class MemberInfoEvent {
     private String cpu;
     private String ram;
     private String imageId;
-    private String loginPort;
+    private int loginPort;
     private String osName;
     private String osVersion;
     private String osArchitecture;
@@ -43,11 +43,11 @@ public class MemberInfoEvent {
         this.scalingDecisionId = scalingDecisionId;
     }
 
-    public boolean isMultiTenant() {
+    public String isMultiTenant() {
         return isMultiTenant;
     }
 
-    public void setMultiTenant(boolean multiTenant) {
+    public void setMultiTenant(String multiTenant) {
         isMultiTenant = multiTenant;
     }
 
@@ -115,11 +115,11 @@ public class MemberInfoEvent {
         this.imageId = imageId;
     }
 
-    public String getLoginPort() {
+    public int getLoginPort() {
         return loginPort;
     }
 
-    public void setLoginPort(String loginPort) {
+    public void setLoginPort(int loginPort) {
         this.loginPort = loginPort;
     }
 

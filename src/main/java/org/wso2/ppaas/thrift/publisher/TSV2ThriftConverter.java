@@ -3,6 +3,8 @@ package org.wso2.ppaas.thrift.publisher;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.databridge.commons.Event;
 import org.wso2.carbon.databridge.commons.utils.DataBridgeCommonsUtils;
 
@@ -17,10 +19,12 @@ import java.util.Map;
 import static org.wso2.ppaas.thrift.publisher.Constants.*;
 
 public class TSV2ThriftConverter {
+    private static Logger logger = LoggerFactory.getLogger(TSV2ThriftConverter.class);
     private List<TSVRecord> tsvRecordList = new ArrayList<>();
     private Map<String, TSVRecord> memberRecords = new HashMap<>();
 
     public void readData() throws IOException {
+        logger.info(String.format("Reading user data file [source] %s", TSV_FILE_PATH));
         BufferedReader TSVFile = new BufferedReader(new FileReader(TSV_FILE_PATH));
         String dataRow = TSVFile.readLine();
         while (dataRow != null) {

@@ -1,12 +1,12 @@
 package org.wso2.ppaas.thrift.publisher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.databridge.commons.Event;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,6 +26,7 @@ public class PPaaSThriftEventPublisher extends Thread {
     private Properties properties = new Properties();
     private TSV2ThriftConverter tsv2ThriftConverter = new TSV2ThriftConverter();
     private ThriftClient thriftClient;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public PPaaSThriftEventPublisher() throws IOException {
         File propertiesFile = new File(System.getProperty(Constants.PROPERTIES_FILENAME_KEY));
@@ -37,10 +38,7 @@ public class PPaaSThriftEventPublisher extends Thread {
 
     public void run() {
         try {
-            String dataFile = properties.getProperty(Constants.THRIFT_PUBLISHER_DATA_FILE_KEY);
-            logger.info(String.format("Reading user data file [source] %s", dataFile));
             tsv2ThriftConverter.readData();
-
             logger.info("Converting to Thrift event format...");
             List<Event> memberLifeCycleEvents = tsv2ThriftConverter.generateMemberLifeCycleEvents();
             List<Event> memberInfoEvents = tsv2ThriftConverter.generateMemberInfoEvents();
@@ -74,21 +72,20 @@ public class PPaaSThriftEventPublisher extends Thread {
         if (filename == null || filename.length() == 0 || eventList == null) {
             throw new IllegalArgumentException("Invalid arguments received for journal write operation");
         }
+        StringWriter stringWriter = new StringWriter();
+        objectMapper.writeValue(stringWriter, eventList);
         PrintWriter out = null;
         try {
             File file = new File(filename);
             FileWriter fw = new FileWriter(file, true);
             BufferedWriter bw = new BufferedWriter(fw);
             out = new PrintWriter(bw);
-            for (Event event : eventList) {
-                out.println(Arrays.toString(event.getPayloadData()));
-                out.flush();
-            }
+            out.println(stringWriter.toString());
+            out.flush();
         } finally {
             if (out != null) {
                 out.close();
             }
         }
-
     }
 }

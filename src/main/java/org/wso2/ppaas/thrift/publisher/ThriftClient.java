@@ -42,8 +42,15 @@ class ThriftClient {
         }
         for (Event event : eventList) {
             logger.info(String.format("Publishing event with [payload] %s", Arrays.toString(event.getPayloadData())));
-            dataPublisher.publish(event);
-            sleep(200);
+            boolean eventSent = dataPublisher.tryPublish(event);
+            if (eventSent) {
+                logger.info(String.format("Successfully published event with [payload] %s", Arrays.toString(event
+                        .getPayloadData())));
+                sleep(200);
+            } else {
+                throw new RuntimeException(String.format("Could not publish event with [payload] %s", Arrays.toString
+                        (event.getPayloadData())));
+            }
         }
     }
 

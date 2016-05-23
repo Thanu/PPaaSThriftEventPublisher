@@ -10,7 +10,7 @@ script_path="$( cd -P "$( dirname "$SOURCE" )" && pwd )/`dirname $0`"
 lib_path=${script_path}/../lib/
 class_path=`echo ${lib_path}/*.jar | tr ' ' ':'`
 properties="-Dthrift.event.publisher.properties=${script_path}/../conf/PPaaSThriftEventPublisher.properties
-            -Devent.user.data.path=${script_path}/../data/EventsData.tsv
+            -DPPAAS_PUBLISHER_HOME=${script_path}/..
             -Dlog4j.configuration=file://${script_path}/../conf/log4j.properties"
 
 # Uncomment below line to enable remote debugging

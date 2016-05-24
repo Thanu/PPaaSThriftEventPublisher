@@ -22,6 +22,8 @@ public class PPaaSThriftEventPublisher extends Thread {
             File.separator + Constants.MEMBER_LIFE_CYCLE_JOURNAL_FILENAME;
     private static String memberInfoJournalFile = Constants.PPAAS_PUBLISHER_HOME_DIR + File.separator + "logs" + File
             .separator + Constants.MEMBER_INFO_JOURNAL_FILENAME;
+    private static String scalingDecisionJournalFile = Constants.PPAAS_PUBLISHER_HOME_DIR + File.separator + "logs" +
+            File.separator + Constants.SCALING_DECISION_JOURNAL_FILENAME;
     private Properties properties = new Properties();
     private TSV2ThriftConverter tsv2ThriftConverter = new TSV2ThriftConverter();
     private ThriftClient thriftClient;
@@ -33,6 +35,7 @@ public class PPaaSThriftEventPublisher extends Thread {
         properties.load(inputStream);
         createJournalFile(memberLifeCycleJournalFile);
         createJournalFile(memberInfoJournalFile);
+        createJournalFile(scalingDecisionJournalFile);
     }
 
     public void run() {
@@ -41,8 +44,10 @@ public class PPaaSThriftEventPublisher extends Thread {
             logger.info("Converting to Thrift event format...");
             List<Event> memberLifeCycleEvents = tsv2ThriftConverter.generateMemberLifeCycleEvents();
             List<Event> memberInfoEvents = tsv2ThriftConverter.generateMemberInfoEvents();
+            List<Event> scalingDecisionEvents = tsv2ThriftConverter.generateScalingDecisionEvents();
             writeEventsToJournal(memberLifeCycleJournalFile, memberLifeCycleEvents);
             writeEventsToJournal(memberInfoJournalFile, memberInfoEvents);
+            writeEventsToJournal(scalingDecisionJournalFile, scalingDecisionEvents);
 
             String type = properties.getProperty(EVENT_TYPE_KEY, THRIFT_EVENT_TYPE);
             String url = properties.getProperty(Constants.THRIFT_RECEIVER_URL_KEY);
@@ -53,6 +58,7 @@ public class PPaaSThriftEventPublisher extends Thread {
             thriftClient = new ThriftClient(type, url, authURL, username, password);
             thriftClient.publishEvents(memberLifeCycleEvents);
             thriftClient.publishEvents(memberInfoEvents);
+            thriftClient.publishEvents(scalingDecisionEvents);
             logger.info("Successfully completed publishing PPaaS Thrift events");
         } catch (Exception e) {
             logger.error("Error while publishing PPaaS Thrift Events", e);

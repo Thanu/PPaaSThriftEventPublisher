@@ -21,11 +21,16 @@ public class Constants {
     public static final String MEMBER_INFO_STREAM_VERSION = "1.0.0";
     public static final String MEMBER_INFO_STREAM_NAME = "member_info";
     public static final String MEMBER_INFO_JOURNAL_FILENAME = MEMBER_INFO_STREAM_NAME + ".log";
+
+    public static final String SCALING_DECISION_STREAM_VERSION = "1.0.0";
+    public static final String SCALING_DECISION_STREAM_NAME = "scaling_decision";
+    public static final String SCALING_DECISION_JOURNAL_FILENAME = SCALING_DECISION_STREAM_NAME + ".log";
+
     public static final String EVENTS_DATA_TSV = "EventsData.tsv";
     public static final String TSV_DELIMITER = "\t";
     public static final String TSV_FILE_PATH = PPAAS_PUBLISHER_HOME_DIR + File.separator + "data" + File.separator +
             Constants.EVENTS_DATA_TSV;
-    public static final int TSV_COLUMN_COUNT = 28;
+    public static final int TSV_COLUMN_COUNT = 43;
     public static final int MEMBER_STATUS_COUNT = 4;
     public static final String MEMBER_STATUS_CREATED = "Created";
     public static final String MEMBER_STATUS_INITIALIZED = "Initialized";

@@ -58,7 +58,21 @@ public class TSV2ThriftConverter {
             tsvRecord.setOsVersion(dataArray[25]);
             tsvRecord.setOsArchitecture(dataArray[26]);
             tsvRecord.setIs64BitOS(Boolean.parseBoolean(dataArray[27]));
-
+            tsvRecord.setMinInstanceCount(Integer.parseInt(dataArray[28]));
+            tsvRecord.setMaxInstanceCount(Integer.parseInt(dataArray[29]));
+            tsvRecord.setRIFPredicted(Integer.parseInt(dataArray[30]));
+            tsvRecord.setRIFThreshold(Integer.parseInt(dataArray[31]));
+            tsvRecord.setRIFRequiredInstances(Integer.parseInt(dataArray[32]));
+            tsvRecord.setMCPredicted(Integer.parseInt(dataArray[33]));
+            tsvRecord.setMCThreshold(Integer.parseInt(dataArray[34]));
+            tsvRecord.setMCRequiredInstances(Integer.parseInt(dataArray[35]));
+            tsvRecord.setLAPredicted(Integer.parseInt(dataArray[36]));
+            tsvRecord.setLAThreshold(Integer.parseInt(dataArray[37]));
+            tsvRecord.setLARequiredInstances(Integer.parseInt(dataArray[38]));
+            tsvRecord.setRequiredInstanceCount(Integer.parseInt(dataArray[39]));
+            tsvRecord.setActiveInstanceCount(Integer.parseInt(dataArray[40]));
+            tsvRecord.setAdditionalInstanceCount(Integer.parseInt(dataArray[41]));
+            tsvRecord.setScalingReason(dataArray[42]);
             tsvRecordList.add(tsvRecord);
             memberRecords.put(tsvRecord.getMemberId(), tsvRecord);
             dataRow = TSVFile.readLine();
@@ -137,8 +151,44 @@ public class TSV2ThriftConverter {
             memberInfoEvent.setOsArchitecture(tsvRecord.getOsArchitecture());
             memberInfoEvent.setIs64BitOS(tsvRecord.is64BitOS());
 
-            Event event = new Event(streamId, memberRecords.get(memberInfoEvent.getMemberId()).getCreatedTime(),
+            Event event = new Event(streamId, memberRecords.get(memberInfoEvent.getMemberId()).getInitializedTime(),
                     null, null, memberInfoEvent.getEventPayload());
+            eventList.add(event);
+        }
+        return eventList;
+    }
+
+    public List<Event> generateScalingDecisionEvents() {
+        if (tsvRecordList == null) {
+            throw new RuntimeException("TSV record list is null");
+        }
+
+        String streamId = DataBridgeCommonsUtils.generateStreamId(Constants.SCALING_DECISION_STREAM_NAME, Constants
+                .SCALING_DECISION_STREAM_VERSION);
+        List<Event> eventList = new ArrayList<>();
+        for (TSVRecord tsvRecord : tsvRecordList) {
+            ScalingDecisionEvent scalingDecisionEvent = new ScalingDecisionEvent();
+            scalingDecisionEvent.setTimestamp(tsvRecord.getCreatedTime());
+            scalingDecisionEvent.setScalingDecisionId(tsvRecord.getScalingDecisionId());
+            scalingDecisionEvent.setClusterId(tsvRecord.getClusterId());
+            scalingDecisionEvent.setMinInstanceCount(tsvRecord.getMinInstanceCount());
+            scalingDecisionEvent.setMaxInstanceCount(tsvRecord.getMaxInstanceCount());
+            scalingDecisionEvent.setRIFPredicted(tsvRecord.getRIFPredicted());
+            scalingDecisionEvent.setRIFThreshold(tsvRecord.getRIFThreshold());
+            scalingDecisionEvent.setRIFRequiredInstances(tsvRecord.getRIFRequiredInstances());
+            scalingDecisionEvent.setMCPredicted(tsvRecord.getMCPredicted());
+            scalingDecisionEvent.setMCThreshold(tsvRecord.getMCThreshold());
+            scalingDecisionEvent.setMCRequiredInstances(tsvRecord.getMCRequiredInstances());
+            scalingDecisionEvent.setLAPredicted(tsvRecord.getLAPredicted());
+            scalingDecisionEvent.setLAThreshold(tsvRecord.getLAThreshold());
+            scalingDecisionEvent.setLARequiredInstances(tsvRecord.getLARequiredInstances());
+            scalingDecisionEvent.setRequiredInstanceCount(tsvRecord.getRequiredInstanceCount());
+            scalingDecisionEvent.setActiveInstanceCount(tsvRecord.getActiveInstanceCount());
+            scalingDecisionEvent.setAdditionalInstanceCount(tsvRecord.getAdditionalInstanceCount());
+            scalingDecisionEvent.setScalingReason(tsvRecord.getScalingReason());
+
+            Event event = new Event(streamId, scalingDecisionEvent.getTimestamp(),
+                    null, null, scalingDecisionEvent.getEventPayload());
             eventList.add(event);
         }
         return eventList;
